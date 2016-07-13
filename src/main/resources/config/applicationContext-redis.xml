@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/context
+     			http://www.springframework.org/schema/context/spring-context-4.2.xsd
+     			http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd">
+
+	<context:property-placeholder location="classpath*:/properties/redis.properties" />
+
+	<bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig">
+		<property name="maxTotal" value="${pool.maxTotal}" />
+		<property name="maxIdle" value="${pool.maxIdle}" />
+		<property name="minIdle" value="${pool.minIdle}" />
+		<property name="maxWaitMillis" value="${pool.maxWaitMillis}" />
+		<property name="testOnBorrow"  value="${pool.testOnBorrow}"/>
+	</bean>
+
+	<bean id="jedisPool" class="redis.clients.jedis.JedisPool">
+		<constructor-arg index="0" ref="jedisPoolConfig" />
+		<constructor-arg index="1" value="${redis.host}" />
+		<constructor-arg index="2" value="${redis.port}" type="int" />
+		<constructor-arg index="3" value="${redis.timeout}"  type="int" />
+		<!--<constructor-arg index="4" value="${redis.auth}"/>-->
+	</bean>
+
+	<!-- 程序中要使用的操作redis集群的对象 -->
+	<bean id="jedisCluster" class="redis.clients.jedis.JedisCluster">
+		<!-- 构造方法注入
+        节点集合（只写一个就可以，集群中其余的节点会自动加载进来） , 超时时间，最大重连次数，数据池配置对象
+     public JedisCluster(Set<HostAndPort> jedisClusterNode, int timeout, int maxRedirections,final GenericObjectPoolConfig poolConfig) -->
+		<constructor-arg name="jedisClusterNode" >
+			<set>
+				<bean class="redis.clients.jedis.HostAndPort">
+					<constructor-arg name="host" value="${redis.host}"/>
+					<constructor-arg name="port" value="${redis.port}"/>
+				</bean>
+			</set>
+		</constructor-arg>
+		<constructor-arg name="timeout" value="${redis.timeout}"/>
+		<constructor-arg name="maxRedirections" value="${redis.maxRedirections}"/>
+		<constructor-arg name="poolConfig" ref="jedisPoolConfig"/>
+	</bean>
+</beans>
