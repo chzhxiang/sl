@@ -24,21 +24,21 @@
 		<!--<constructor-arg index="4" value="${redis.auth}"/>-->
 	</bean>
 
-	<!-- 程序中要使用的操作redis集群的对象 -->
-	<bean id="jedisCluster" class="redis.clients.jedis.JedisCluster">
-		<!-- 构造方法注入
-        节点集合（只写一个就可以，集群中其余的节点会自动加载进来） , 超时时间，最大重连次数，数据池配置对象
-     public JedisCluster(Set<HostAndPort> jedisClusterNode, int timeout, int maxRedirections,final GenericObjectPoolConfig poolConfig) -->
-		<constructor-arg name="jedisClusterNode" >
-			<set>
-				<bean class="redis.clients.jedis.HostAndPort">
-					<constructor-arg name="host" value="${redis.host}"/>
-					<constructor-arg name="port" value="${redis.port}"/>
-				</bean>
-			</set>
-		</constructor-arg>
-		<constructor-arg name="timeout" value="${redis.timeout}"/>
-		<constructor-arg name="maxRedirections" value="${redis.maxRedirections}"/>
-		<constructor-arg name="poolConfig" ref="jedisPoolConfig"/>
-	</bean>
+	<!--&lt;!&ndash; 程序中要使用的操作redis集群的对象 &ndash;&gt;-->
+	<!--<bean id="jedisCluster" class="redis.clients.jedis.JedisCluster">-->
+		<!--&lt;!&ndash; 构造方法注入-->
+        <!--节点集合（只写一个就可以，集群中其余的节点会自动加载进来） , 超时时间，最大重连次数，数据池配置对象-->
+     <!--public JedisCluster(Set<HostAndPort> jedisClusterNode, int timeout, int maxRedirections,final GenericObjectPoolConfig poolConfig) &ndash;&gt;-->
+		<!--<constructor-arg name="jedisClusterNode" >-->
+			<!--<set>-->
+				<!--<bean class="redis.clients.jedis.HostAndPort">-->
+					<!--<constructor-arg name="host" value="${redis.host}"/>-->
+					<!--<constructor-arg name="port" value="${redis.port}"/>-->
+				<!--</bean>-->
+			<!--</set>-->
+		<!--</constructor-arg>-->
+		<!--<constructor-arg name="timeout" value="${redis.timeout}"/>-->
+		<!--<constructor-arg name="maxRedirections" value="${redis.maxRedirections}"/>-->
+		<!--<constructor-arg name="poolConfig" ref="jedisPoolConfig"/>-->
+	<!--</bean>-->
 </beans>
