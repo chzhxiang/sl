@@ -28,6 +28,7 @@
 	<tx:advice id="txAdvicedrug" transaction-manager="transactionManager">
 		<tx:attributes>
 			<tx:method name="get*" read-only="true" />
+			<tx:method name="query*" read-only="true" />
 			<tx:method name="*" />
 		</tx:attributes>
 	</tx:advice>
@@ -45,4 +46,36 @@
 		<property name="basePackage" value="com.sl.mapper" />
 		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />
 	</bean>
+
+	<bean name="autoLoginFilter" class="com.sl.support.filter.AutoLoginFilter">
+		<property name="needLoginUrls">
+			<list>
+				<value>/index</value>
+				<value>/dm</value>
+				<value>/job</value>
+				<value>/org</value>
+				<value>/orgManagement</value>
+				<value>/staff</value>
+				<value>/capability</value>
+				<value>/res</value>
+				<value>/role</value>
+				<value>/mutual</value>
+				<value>/admin</value>
+				<value>/wallpaper</value>
+				<value>/saver</value>
+				<value>/</value>
+			</list>
+		</property>
+		<property name="indexUrls">
+			<list>
+				<value>/dm</value>
+				<value>/job</value>
+				<value>/orgManagement</value>
+				<value>/mutual</value>
+			</list>
+		</property>
+	</bean>
+
+
+	<import resource="applicationContext-dubbo.xml" />
 </beans>
