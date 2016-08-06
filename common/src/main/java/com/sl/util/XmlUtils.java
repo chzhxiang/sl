@@ -69,7 +69,7 @@ public class XmlUtils {
 		try {
 			SAXReader reader = new SAXReader();
 			document = reader.read(new File(xmlFilePath));
-		} catch (DocumentException e) {
+		} catch (Exception e) {
 			throw new RuntimeException(e.getMessage(), e);
 		}
 		return document;
