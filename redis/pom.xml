@@ -14,6 +14,7 @@
     <modules>
         <module>redis-api</module>
         <module>redis-service</module>
+        <module>startup</module>
     </modules>
 
 </project>

@@ -1,0 +1,335 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yunpc.dm.dao.DeviceDAO">
+<sql id="fields">id,devid,model,make,dmc,locale,auth_pref,client_pw,server_pw,client_nonce,server_nonce,swv,hwv,fwv,lmac,wmac,bmac,type,sn,name,gmt_create,gmt_modify, upper(auth_code) auth_code,available,status </sql>
+    <select id="selectById" resultType="DeviceDO"
+            parameterType="long">
+        SELECT id,devid,model,make,dmc,locale,auth_pref,client_pw,server_pw,
+        client_nonce,server_nonce,swv,hwv,fwv,lmac,wmac,bmac,type,sn,name,gmt_create,gmt_modify,
+        upper(auth_code) auth_code,available,status FROM dm_device WHERE id = #{id}
+    </select>
+
+    <select id="selectByDevId" resultType="DeviceDO"
+            parameterType="String">
+        SELECT id,devid,model,make,dmc,locale,auth_pref,client_pw,server_pw,
+        client_nonce,server_nonce,swv,hwv,fwv,lmac,wmac,bmac,type,sn,name,gmt_create,gmt_modify,
+        upper(auth_code) auth_code,available,status  FROM dm_device WHERE devid = #{devid}
+    </select>
+    <select id="selectBysn" resultType="DeviceDO"
+            parameterType="String">
+        SELECT id,devid,model,make,dmc,locale,auth_pref,client_pw,server_pw,
+        client_nonce,server_nonce,swv,hwv,fwv,lmac,wmac,bmac,type,sn,name,gmt_create,gmt_modify,
+        upper(auth_code) auth_code,available,status  FROM dm_device WHERE sn = #{sn}
+    </select>
+    <select id="selectInfo" resultType="DeviceDO" parameterType="DeviceDO">
+        SELECT * FROM dm_device 
+       <where>
+           <if test="sn != null">
+				AND `sn`=#{sn}
+			</if>
+ 			<if test="make != null">
+				AND `make`=#{make}
+			</if>
+ 			<if test="model != null">
+				AND `model`=#{model}
+			</if>
+	     </where>
+    </select>
+    
+    
+
+    <select id="selectAuthCodeByIds" resultType="DeviceDO">
+        SELECT id,devid,model,make,dmc,locale,auth_pref,client_pw,server_pw,
+        client_nonce,server_nonce,swv,hwv,fwv,lmac,wmac,bmac,type,sn,name,gmt_create,gmt_modify,
+        upper(auth_code) auth_code,available,status  FROM dm_device WHERE 1=1
+        <choose>
+            <when test="list !=null and list.size()>0">
+                AND id IN
+                <foreach item='id' index='index' collection='list' open='(' separator=',' close=')'>
+                    #{id}
+                </foreach>
+            </when >
+            <otherwise>AND 1=2</otherwise>
+        </choose>
+    </select>
+
+    <select id="selectDevicesByAuthCode" resultType="DeviceDO">
+        SELECT id,devid,model,make,dmc,locale,auth_pref,client_pw,server_pw,
+        client_nonce,server_nonce,swv,hwv,fwv,lmac,wmac,bmac,type,sn,name,gmt_create,gmt_modify,
+        upper(auth_code) auth_code,available,status  FROM dm_device WHERE auth_code = #{authCode} ORDER BY gmt_create DESC
+    </select>
+
+    <select id="selectByAuthCode" resultType="DeviceDO">
+        SELECT id,devid,model,make,dmc,locale,auth_pref,client_pw,server_pw,
+        client_nonce,server_nonce,swv,hwv,fwv,lmac,wmac,bmac,type,sn,name,gmt_create,gmt_modify,
+        upper(auth_code) auth_code,available,status  FROM dm_device WHERE auth_code = #{authCode} ORDER BY gmt_create DESC LIMIT #{pageStart}, #{pageSize}
+    </select>
+
+    <select id="selectNumByAuthCode" resultType="int">
+        SELECT count(id) FROM dm_device WHERE auth_code = #{authCode}
+    </select>
+
+    <select id="selectByAuthCodes" resultType="DeviceDO">
+        SELECT id,devid,model,make,dmc,locale,auth_pref,client_pw,server_pw,
+        client_nonce,server_nonce,swv,hwv,fwv,lmac,wmac,bmac,type,sn,name,gmt_create,gmt_modify,
+        upper(auth_code) auth_code,available,status  FROM dm_device WHERE auth_code IN
+        <foreach item='authCode' index='index' collection='authCodes' open='(' separator=',' close=')'>
+            #{authCode}
+        </foreach>
+        <if test="status != null and status !=''">
+            AND status = #{status}
+        </if>
+        <if test="type != null and type !=''">
+            AND type like CONCAT('%',#{type},'%')
+        </if>
+        <if test="name != null and name !=''">
+            AND name like CONCAT('%',#{name},'%')
+        </if>
+        <if test="sn != null and sn !=''">
+            AND sn like CONCAT('%',#{sn},'%')
+        </if>
+        <if test="make != null and make !=''">
+            AND make like CONCAT('%',#{make},'%')
+        </if>
+        <if test="model != null and model !=''">
+            AND model like CONCAT('%',#{model},'%')
+        </if>
+        <if test="swv != null and swv !=''">
+            AND swv like CONCAT('%',#{swv},'%')
+        </if>
+        <if test="available != null and available ==1">
+            AND devid is not null AND devid != ''
+        </if>
+        <if test="available != null and available == 0">
+            AND (devid is null OR devid='')
+        </if>
+        ORDER BY gmt_create DESC LIMIT #{pageStart}, #{pageSize}
+    </select>
+    
+     <select id="getByAuthCodes" resultType="com.yunpc.dm.hsfapi.vo.DeviceInfo">
+        SELECT devid,model,make,sn,name, upper(auth_code) auth_code,available,status  FROM dm_device WHERE auth_code IN
+        <foreach item='authCode' index='index' collection='authCodes' open='(' separator=',' close=')'>
+            #{authCode}
+        </foreach>
+        ORDER BY gmt_create DESC
+    </select>
+    <select id="selectNumByAuthCodes" resultType="int">
+        <![CDATA[
+          SELECT count(id)
+          FROM dm_device WHERE auth_code IN
+         ]]>
+        <foreach item='authCode' index='index' collection='authCodes' open='(' separator=',' close=')'>
+            #{authCode}
+        </foreach>
+        <if test="status != null and status !=''">
+            AND status = #{status}
+        </if>
+        <if test="type != null and type !=''">
+            AND type like CONCAT('%',#{type},'%')
+        </if>
+        <if test="name != null and name !=''">
+            AND name like CONCAT('%',#{name},'%')
+        </if>
+        <if test="sn != null and sn !=''">
+            AND sn like CONCAT('%',#{sn},'%')
+        </if>
+        <if test="make != null and make !=''">
+            AND make like CONCAT('%',#{make},'%')
+        </if>
+        <if test="model != null and model !=''">
+            AND model like CONCAT('%',#{model},'%')
+        </if>
+        <if test="swv != null and swv !=''">
+            AND swv like CONCAT('%',#{swv},'%')
+        </if>
+        <if test="available != null and available ==1">
+            AND devid is not null AND devid != ''
+        </if>
+        <if test="available != null and available == 0">
+            AND (devid is null OR devid='')
+        </if>
+    </select>
+    <update id="update" parameterType="DeviceDO">
+        <![CDATA[
+            UPDATE dm_device SET
+            model = #{model},
+            make = #{make},
+            devid = #{devid},
+			dmc = #{dmc},
+			locale = #{locale},
+			auth_pref = #{authPref},
+			client_pw = #{clientPw},
+			client_nonce = #{clientNonce},
+			server_pw = #{serverPw},
+			server_nonce = #{serverNonce},
+			swv = #{swv},
+			hwv = #{hwv},
+			fwv = #{fwv},
+			lmac = #{lmac},
+			wmac = #{wmac},
+			bmac = #{bmac},
+			auth_code = #{authCode},
+			sn = #{sn},
+			type=#{type},
+			name = #{name},
+			available = #{available},
+            gmt_modify = NOW()
+			WHERE
+			id = #{id}
+        ]]>
+    </update>
+    <insert id="insert" parameterType="DeviceDO" useGeneratedKeys="true" keyProperty="id">
+        <![CDATA[
+            INSERT INTO dm_device(
+            devid,
+            model,
+            make,
+            dmc,
+            locale,
+            auth_pref,
+            client_pw,
+            server_pw,
+            client_nonce,
+            server_nonce,
+            swv,
+            hwv,
+            fwv,
+            lmac,
+            wmac,
+            bmac,
+            type,
+            sn,
+            name,
+            available,
+            gmt_create,
+            gmt_modify,
+            auth_code)
+            VALUES (
+            #{devid},
+            #{model},
+            #{make},
+            #{dmc},
+            #{locale},
+            #{authPref},
+            #{clientPw},
+            #{serverPw},
+            #{clientNonce},
+            #{serverNonce},
+            #{swv},
+            #{hwv},
+            #{fwv},
+            #{lmac},
+            #{wmac},
+            #{bmac},
+            #{type},
+            #{sn},
+            #{name},
+            #{available},
+            NOW(),
+            NOW(),
+            #{authCode}
+            )
+        ]]>
+    </insert>
+    <delete id="delete"  parameterType="long">
+        DELETE FROM dm_device WHERE id = #{id}
+    </delete>
+
+    <insert id="insertHistory" parameterType="DeviceHistoryDO" useGeneratedKeys="true" keyProperty="id">
+        <![CDATA[
+            INSERT INTO dm_device_history(
+            devid,
+            model,
+            make,
+            sn,
+            auth_code,
+            org_name,
+            gmt_create,
+            gmt_modified,
+            gmt_bind)
+            VALUES (
+            #{devid},
+            #{model},
+            #{make},
+            #{sn},
+            #{authCode},
+            #{orgName},
+            NOW(),
+            NOW(),
+            NOW()
+            )
+        ]]>
+    </insert>
+
+    <update id="updateHistory" parameterType="DeviceHistoryDO">
+        <![CDATA[
+           UPDATE dm_device_history SET
+			gmt_unbind = NOW(),
+            gmt_modified = NOW()
+			WHERE
+			devid = #{devid} AND auth_code = #{authCode} AND gmt_unbind IS NULL
+        ]]>
+    </update>
+
+    <select id="selectDevHisDOByDevIdAndAuthcode" resultType="DeviceHistoryDO"
+            parameterType="DeviceHistoryDO">
+        SELECT id,devid,model,make,sn,org_name,gmt_create,gmt_modified,
+        upper(auth_code) auth_code,gmt_bind,gmt_unbind FROM dm_device_history WHERE devid = #{devid} AND auth_code = #{authCode}
+        ORDER BY gmt_create
+    </select>
+
+    <select id="selectDevHisDOByAuthcode" resultType="DeviceHistoryDO">
+
+        SELECT id,devid,model,make,sn,org_name,gmt_create,gmt_modified,
+        upper(auth_code) auth_code,gmt_bind,COALESCE (gmt_unbind,NOW()) gmt_unbind,
+        gmt_unbind effective_gmt_unbind
+        FROM dm_device_history
+        WHERE 1=1
+        AND auth_code IN
+        <foreach item='authCode' index='index' collection='authCodes' open='(' separator=',' close=')'>
+            #{authCode}
+        </foreach>
+        AND (
+        <![CDATA[
+         (gmt_bind>=#{beginDate} AND gmt_bind<=#{endDate})
+          OR (COALESCE(gmt_unbind,NOW())>=#{beginDate} AND COALESCE(gmt_unbind,NOW())<=#{endDate})
+          OR (gmt_bind>=#{beginDate} AND COALESCE(gmt_unbind,NOW())<=#{endDate})
+          OR (gmt_bind<=#{beginDate} AND COALESCE(gmt_unbind,NOW())>=#{endDate})
+          ]]>
+        )
+        ORDER BY id
+
+    </select>
+    
+    <select id="selectDevicesByDevIds" resultType="DeviceDO">
+        SELECT id,devid,model,make,dmc,locale,auth_pref,client_pw,server_pw,
+        client_nonce,server_nonce,swv,hwv,fwv,lmac,wmac,bmac,type,sn,name,gmt_create,gmt_modify,
+        upper(auth_code) auth_code,available,status  FROM dm_device WHERE 1=1
+        <choose>
+            <when test="list !=null and list.size()>0">
+                AND devid IN
+                <foreach item='devId' index='index' collection='list' open='(' separator=',' close=')'>
+                    #{devId}
+                </foreach>
+            </when >
+            <otherwise>AND 1=2</otherwise>
+        </choose>
+    </select>
+    <select id="selectOrgByDevIds" resultType="OrgDO">
+        SELECT id,name,auth_code,description,parent_id,type,gmt_create,gmt_modify,
+        parent_ids,available,begin_deadline,deadline,limitation,
+        capability_ids,role_ids,currentnum,logo_url,agreement_url,appstore_key,login_config, auto_config FROM dm_org  
+        <where>
+            <if test="list !=null and list.size()>0">
+                AND auth_code IN
+                (select  auth_code from dm_device where devid IN
+                <foreach item='devId' index='index' collection='list' open='(' separator=',' close=')'>
+                    #{devId}
+                </foreach>
+                )
+            </if >
+        </where>
+    </select>
+</mapper>
