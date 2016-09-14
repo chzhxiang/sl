@@ -6,11 +6,13 @@
         <artifactId>redis</artifactId>
         <groupId>com.sl</groupId>
         <version>1.0-SNAPSHOT</version>
-        <relativePath>../../redis/pom.xml</relativePath>
+        <relativePath>../../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>redis-api</artifactId>
-
+    <packaging>jar</packaging>
+    <name>${project.artifactId}</name>
+    <description>业务模块服务接口定义</description>
 
 </project>

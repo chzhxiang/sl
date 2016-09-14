@@ -15,58 +15,7 @@
     <modules>
         <module>core-api</module>
         <module>core-service</module>
-        <module>startup</module>
+        <module>core-startup</module>
     </modules>
 
-    <dependencies>
-        <dependency>
-            <groupId>com.sl</groupId>
-            <artifactId>common</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.sl</groupId>
-            <artifactId>redis-api</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>19.0</version>
-        </dependency>
-    </dependencies>
-
-    <profiles>
-        <profile>
-            <id>dev</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <build>
-                <filters>
-                    <filter>filters/dev.properties</filter>
-                </filters>
-            </build>
-        </profile>
-
-        <profile>
-            <id>test</id>
-            <build>
-                <filters>
-                    <filter>filters/test.properties</filter>
-                </filters>
-            </build>
-        </profile>
-
-        <profile>
-            <id>prod</id>
-            <build>
-                <filters>
-                    <filter>filters/prod.properties</filter>
-                </filters>
-            </build>
-        </profile>
-    </profiles>
 </project>
