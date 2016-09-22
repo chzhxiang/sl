@@ -44,7 +44,8 @@
 			</list>
 		</property>
 	</bean>
-
+	<!--springbean容器启动完成以后执行-->
+	<!--<bean class="com.sl.init.Init"/>-->
 
 	<import resource="applicationContext-dubbo.xml" />
 </beans>
