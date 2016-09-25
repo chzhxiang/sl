@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:mvc="http://www.springframework.org/schema/mvc"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context-4.2.xsd
+	http://www.springframework.org/schema/mvc
+	http://www.springframework.org/schema/mvc/spring-mvc-4.2.xsd">
+
+	<context:annotation-config/>
+	<!-- 自动扫描controller包下的所有类，使其认为spring mvc的控制器 -->
+	<context:component-scan base-package="com.sl.controller" />
+	<mvc:annotation-driven />
+
+	<bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<list>
+				<!-- 这里支持多种寻址方式：classpath和file -->
+				<value>classpath:properties/pay.properties</value>
+			</list>
+		</property>
+	</bean>
+	<!--静态资源访问 -->
+	<mvc:resources mapping="/static/**" location="/static/" />
+	<!-- 避免IE执行AJAX时,返回JSON出现下载文件 -->
+	<bean id="mappingJacksonHttpMessageConverter"
+		class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+		<property name="supportedMediaTypes">
+			<list>
+				<value>text/html;charset=UTF-8</value>
+			</list>
+		</property>
+	</bean>
+
+	<!-- 启动Spring MVC的注解功能，完成请求和注解POJO的映射 -->
+	<bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
+		<property name="messageConverters">
+			<list>
+				<ref bean="mappingJacksonHttpMessageConverter" /><!-- json转换器 -->
+			</list>
+		</property>
+	</bean>
+
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<property name="defaultEncoding"> <value>UTF-8</value></property>
+		<property name="maxUploadSize"> <value>32505856</value></property> <!--上传文件大小限制为31M，31*1024*1024-->
+		<property name="maxInMemorySize"><value>4096</value></property>
+	</bean>
+
+	<!--<mvc:interceptors>-->
+		<!-- 权限验证插件 -->
+		<!--<mvc:interceptor>-->
+			<!--<mvc:mapping path="/**"/>-->
+			<!--<bean class="com.sl.support.interceptor.PurviewInterceptor" />-->
+		<!--</mvc:interceptor>-->
+		<!-- 日志插件 -->
+		<!--<mvc:interceptor>-->
+			<!--<mvc:mapping path="/**"/>-->
+			<!--<bean class="com.sl.support.interceptor.WebInterceptor" />-->
+		<!--</mvc:interceptor>-->
+	<!--</mvc:interceptors>-->
+
+	<!-- 对模型视图名称的解析，即在模型视图名称添加前后缀 p:prefix中模板放置路径 -->
+	<bean id="velocityConfig"
+		  class="org.springframework.web.servlet.view.velocity.VelocityConfigurer">
+		<property name="resourceLoaderPath" value="/WEB-INF/view/" />
+		<property name="velocityProperties">
+			<props>
+				<prop key="input.encoding">utf8</prop>
+				<prop key="output.encoding">utf8</prop>
+				<prop key="contentType">text/html;charset=UTF-8</prop>
+				<prop key="runtime.interpolate.string.literals">true</prop>
+				<prop key="eventhandler.referenceinsertion.class">org.apache.velocity.app.event.implement.EscapeHtmlReference</prop>
+				<prop key="eventhandler.escape.html.match">/_html_*/</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean id="viewResolver"
+		  class="org.springframework.web.servlet.view.velocity.VelocityLayoutViewResolver">
+		<property name="cache" value="false" />
+		<property name="viewClass" value="org.springframework.web.servlet.view.velocity.VelocityLayoutView"/>
+		<property name="toolboxConfigLocation" value="/WEB-INF/classes/config/toolbox.xml"/>
+		<property name="contentType" value="text/html;charset=UTF-8" />
+		<property name="exposeSpringMacroHelpers" value="true" />
+		<property name="prefix" value=""/>
+		<property name="suffix" value=".vm" />
+		<property name="layoutUrl" value="layout/layout.vm"></property>
+		<property name="layoutKey" value="layout"></property>
+		<property name="screenContentKey" value="screen_placeholder" />
+		<property name="exposeRequestAttributes" value="true" /><!-- if open request Attributes-->
+		<property name="requestContextAttribute" value="rc"/><!-- request Attribute name-->
+		<property name="dateToolAttribute">
+			<value>dateTool</value>
+		</property>
+		<property name="numberToolAttribute">
+			<value>numberTool</value>
+		</property>
+	</bean>
+
+	<!-- 全局异常处理 -->
+	<bean id="exceptionResolver" class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+		<property name="defaultErrorView">
+			<value>/error/error</value>
+		</property>
+		<property name="defaultStatusCode">
+			<value>500</value>
+		</property>
+		<property name="warnLogCategory">
+			<value>org.springframework.web.servlet.handler.SimpleMappingExceptionResolver</value>
+		</property>
+	</bean>
+
+
+</beans>

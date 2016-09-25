@@ -1,0 +1,27 @@
+#set($layout="/login/login-layout.vm")
+<div>
+    <p>sf的值：$!sf</p>
+    #if($!sf)
+    登陆页
+    #end
+
+    #if ($list.contains($str))
+        $list.contains($str)
+    #elseif ($list.contains($str))
+
+    #end
+    <br>
+    #set ($i=0)
+    #foreach( $info in $list)
+        $velocityCount:
+        $!info<br>
+        #set($i=$i+1)
+    #end
+    <br>
+    $!dateTool.format('yyyy-MM-dd HH:mm:ss ',$!time)
+    <br>
+    $!str1
+    <br>
+    $!tools.substring($!str1,1,5)
+##    #parse("/blog/top.html")
+</div>

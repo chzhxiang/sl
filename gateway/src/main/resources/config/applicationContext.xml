@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/context
+     			http://www.springframework.org/schema/context/spring-context-4.2.xsd
+     			http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
+    			http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.2.xsd
+     			http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.2.xsd">
+
+	<aop:aspectj-autoproxy proxy-target-class="true"/>
+
+	<context:component-scan base-package="com.sl">
+		<context:exclude-filter type="annotation"
+								expression="org.springframework.stereotype.Controller" />
+	</context:component-scan>
+	<bean name="autoLoginFilter" class="com.sl.support.filter.AutoLoginFilter">
+		<property name="needLoginUrls">
+			<list>
+				<value>/index</value>
+				<value>/dm</value>
+				<value>/job</value>
+				<value>/org</value>
+				<value>/orgManagement</value>
+				<value>/staff</value>
+				<value>/capability</value>
+				<value>/res</value>
+				<value>/role</value>
+				<value>/mutual</value>
+				<value>/admin</value>
+				<value>/wallpaper</value>
+				<value>/saver</value>
+				<value>/</value>
+			</list>
+		</property>
+		<property name="indexUrls">
+			<list>
+				<value>/dm</value>
+				<value>/job</value>
+				<value>/orgManagement</value>
+				<value>/mutual</value>
+			</list>
+		</property>
+	</bean>
+	<!--springbean容器启动完成以后执行-->
+	<!--<bean class="com.sl.init.Init"/>-->
+
+	<import resource="applicationContext-dubbo.xml" />
+</beans>
